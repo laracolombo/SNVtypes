@@ -18,7 +18,7 @@ Complete VCF file, including indels and single nucleotide variants, returned by 
 Genome of reference (ex. Hsapiens): the corresponding library has to be uploaded in the environment. E.g., for the Human Genome hg19 the library to be uploaded is 'BSgenome.Hsapiens.UCSC.hg19' and 'reference_genome' will be 'Hsapiens'.   
 }
   \item{plot}{
-Boolean: if set to TRUE, a barplot that summarizes the mutation count for each mutation type will be displayed. 
+Boolean: if set to TRUE (default), a barplot that summarizes the mutation count for each mutation type will be displayed. 
 
 }
 \item{context_length}{
