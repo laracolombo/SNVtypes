@@ -1,0 +1,13 @@
+Package: SNVtypes
+Type: Package
+Title: Analysis of VCF files to determine the mutation type of single nucleotide variants
+Version: 0.99.0
+Date: 2022-08-02
+Authors@R: person("Lara", "Colombo", email = "lara.colombo@mail.polimi.it", role = c("cre", "aut")) 
+Description: The main functionality of this package is providing the mutation type of all the single nucleotide variants that are present in a VCF file. The package takes as input a complete VCF file, filters only single nucleotide variants and determines the mutation type in the "A[C>T]G" notation. It avoids redundancy by showing only C or T as mutated reference base (therefore the reverse sequence might be returned). Plots and count tables to summarize the results are available.
+License: GPL-2
+Depends: ggplot2, VariantAnnotation, GenomicRanges, Biostrings, BSgenome.Hsapiens.UCSC.hg19
+Imports: IRanges, MatrixGenerics
+Suggests: knitr, rmarkdown, BiocStyle, testthat
+biocViews: VariantDetection, Sequencing, Coverage, VariantAnnotation, Alignment, SequenceMatching, DataImport
+VignetteBuilder: knitr

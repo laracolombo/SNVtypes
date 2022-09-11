@@ -1,0 +1,9 @@
+export("LoadVCF", "MutationsCount", "MutationsType")
+
+import(ggplot2)
+import(VariantAnnotation)
+import(GenomicRanges)
+import(BSgenome.Hsapiens.UCSC.hg19)
+import(Biostrings)
+importFrom(MatrixGenerics,rowRanges)
+import(IRanges)

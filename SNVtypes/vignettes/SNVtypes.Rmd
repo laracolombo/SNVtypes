@@ -1,0 +1,109 @@
+---
+title: "Introduction to SNVtypes package"
+author:
+- name: "Lara Colombo"
+  email: lara.colombo@mail.polimi.it 
+date: "`r Sys.Date()`"
+output: BiocStyle::html_document 
+vignette: >
+  %\VignetteIndexEntry{SNVtypes}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, results="hide", include = FALSE}
+library(SNVtypes)
+```
+
+# INTRODUCTION 
+
+The `SNVtypes` package provides a set of functions to determine the type of mutations stored in a VCF file by the **UP[REF>ALT]DOWN** notion. 
+While complete VCF files can be submitted, only _single nucleotide variants_ will be processed and returned, as the package is meant to provide a qualitative and quantitative analysis only for these types of mutations.  
+
+# LOADING THE VCF FILE 
+
+It is recommended to upload the mutation file with the function `LoadVCF()`, which returns the mutation data provided by the VCF file as the GRanges object present in the corresponding CollapsedVCF format. In fact, the functions stored by the package take as input GRanges objects to analyze the information stored by VCF files. If known, also the genome annotation corresponding to the VCF can be passed, otherwise the correct genome is taken from the VCF file header. 
+Alternatively, the user might exploit the functions provided by VariantAnnotation library, which is imported by the package, and upload the file as follow:
+
+```{r}
+vcf <- system.file("extdata", "chr22.vcf.gz", package="VariantAnnotation")
+
+granges_object <- LoadVCF(vcf, 'hg19')
+
+# alternatively 
+
+vcf <- readVcf(vcf)
+granges_object <- rowRanges(vcf)
+```
+
+The "granges_object" variable will be the variable to be passed to the functions of the package. 
+Uploading a file not in VCF format will throw an error. 
+
+# DETERMINING THE MUTATION TYPES
+
+The `MutationsType()` function takes as input the GRanges object of a VCF file (see section 'Loading the VCF file' above), its corresponding reference genome and a "context length" parameter. It processes only the single nucleotide variants that are present in the VCF files and returns a vector of characters, whose elements are the mutation type notion **UP[REF>ALT]DOWN** corresponding to each SNV entry. 
+
+The **reference genome** has to be coherent with the uploaded VCF file: the corresponding library (BSgenome) has to be attached by the user in the environment and then the Biostring-based genome can be passed to the function. 
+
+For example, if the user needs the 'hg19' annotation: 
+
+```{r}
+library(BSgenome.Hsapiens.UCSC.hg19)
+reference_genome <- Hsapiens
+```
+
+The **context length** parameter (integer) determines the desired length of the **UP[REF>ALT]DOWN** pattern, in which REF > ALT counts as 1: for example, the mutation “T[C>T]G” corresponds to a context length of 3. 
+If an even value is passed, there will always be one more base in the upstream sequence compared to the downstream sequence. 
+
+The use example of the function is explained as follows:
+
+```{r}
+mutations <- MutationsType(granges_object[1:20], 8, Hsapiens)
+head(mutations)
+```
+
+**IMPORTANT NOTE**: the mutation “C[G>A]A” is the same as “T[C>T]G” on the reverse strand, therefore there would be a redundancy in reporting mutations on both strands. To avoid this happening, the function returns the reverse complement of each mutation pattern whenever the reference base is A or G, so that all mutation types are reported to have C or T as the mutated REF base.
+
+# GETTING THE MUTATIONS COUNT
+
+The `MutationsCount()` function returns the count table of the mutation types for the set of single nucleotide variants of the VCF file. It takes as input the GRanges object of the VCF file, the reference genome, the plot parameter (boolean type) and the context length parameter (optional).
+
+As mentioned above, the **reference genome** has to be coherent with the uploaded VCF file: the corresponding library (BSgenome) has to be attached by the user in the environment and then the Biostring-based genome can be passed to the function.
+
+If set to TRUE, the **plot parameter** returns a horizontal barplot summarizing the absolute frequency of each mutation in the file. 
+
+The **context length** parameter determines the size of the pattern to be considered as mutation type: if nothing is passed, the count table of the single base substitutions (ex. T>C) is returned. This might be useful whenever the original set of mutation is large, and therefore larger values of context length might return many different mutation types, making the plot unclear. 
+
+Here is shown an example with a not-null context length parameter, considering the first 20 entries:
+
+```{r}
+MutationsCount(granges_object[1:20], Hsapiens, plot = TRUE, 5)
+```
+To have a clearer plot, the context length parameter can be omitted:
+
+```{r}
+MutationsCount(granges_object[1:20], Hsapiens, plot = TRUE)
+```
+In this case, only the reference and alternative base are shown. 
+
+# SESSION INFO 
+
+```{r}
+sessionInfo()
+```
+
+
+
+
+
+
+
+
+
