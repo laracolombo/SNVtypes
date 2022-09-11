@@ -1,4 +1,4 @@
-MutationsCount <- function(vcf, reference_genome, plot = c(TRUE, FALSE), context_length = NULL) {
+MutationsCount <- function(vcf, reference_genome, plot = TRUE, context_length = NULL) {
   Mutation_Types <- c(rep(NA, length(vcf)))
   if (!is.null(context_length)) {if (all(startsWith(levels(vcf@seqnames), 'chr')) == FALSE) {levels(vcf@seqnames) <- paste('chr', levels(vcf@seqnames), sep = '')}
     N <- length(vcf)
